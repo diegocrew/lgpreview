@@ -33,8 +33,10 @@ h1, h2, h3, p, figure { margin: 0; }
 .shell { width: min(1376px, calc(100% - 112px)); margin-inline: auto; }
 .site-header { position: sticky; top: 0; z-index: 20; background: #071827ed; backdrop-filter: blur(18px); border-bottom: 1px solid var(--line); }
 .header-inner { min-height: 92px; display: flex; align-items: center; justify-content: space-between; gap: 30px; }
-.brand { flex-shrink: 0; display: block; padding: 8px 12px; background: #fff; border-radius: 2px; }
-.brand img { width: 105px; height: auto; }
+.brand { flex-shrink: 0; display: block; padding-block: 8px; }
+/* Screen blending removes the inverted white matte without altering the source logo. */
+.brand img { width: 125px; height: auto; filter: grayscale(1) invert(1); mix-blend-mode: screen; transition: filter .25s; }
+.brand:hover img, .brand:focus-visible img { filter: grayscale(1) invert(1) brightness(1.2); }
 .desktop-nav { display: flex; gap: 25px; font-size: 12px; font-weight: 650; }
 .desktop-nav a { position: relative; padding-block: 16px; transition: color .2s; }
 .desktop-nav a::after { content: ''; position: absolute; bottom: 5px; left: 0; width: 0; height: 2px; background: var(--accent); transition: width .25s; }
@@ -304,8 +306,8 @@ body:has(dialog[open]) { overflow: hidden; }
 @media (max-width: 760px) {
   .shell { width: calc(100% - 40px); }
   .header-inner { min-height: 76px; gap: 12px; }
-  .brand { padding: 6px 9px; }
-  .brand img { width: 84px; }
+  .brand { padding-block: 6px; }
+  .brand img { width: 100px; }
   .header-actions { gap: 9px; }
   .header-contact { display: none; }
   .languages { gap: 0; }
