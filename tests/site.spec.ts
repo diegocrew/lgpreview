@@ -2,9 +2,9 @@ import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 
 const locales = [
-  { code: 'sk', heading: 'Vaša vízia.', language: 'English' },
-  { code: 'en', heading: 'Your vision.', language: 'Deutsch' },
-  { code: 'de', heading: 'Ihre Vision.', language: 'Slovenčina' },
+  { code: 'sk', heading: 'Od výkresu.', language: 'English' },
+  { code: 'en', heading: 'From drawing.', language: 'Deutsch' },
+  { code: 'de', heading: 'Vom Entwurf.', language: 'Slovenčina' },
 ];
 
 for (const locale of locales) {
@@ -76,4 +76,21 @@ test('mobile navigation, language switching and layout', async ({ page }) => {
   }
   await page.setViewportSize({ width: 390, height: 844 });
   expect((await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze()).violations).toEqual([]);
+});
+
+test('engineering hover effects also respond to focus and respect reduced motion', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  await page.goto('en/');
+  const card = page.locator('.service-card').first();
+  await card.scrollIntoViewIfNeeded();
+  const restingTop = await card.evaluate(element => element.getBoundingClientRect().top);
+  await card.hover();
+  await expect.poll(() => card.evaluate(element => element.getBoundingClientRect().top)).toBeLessThan(restingTop - 6);
+  await page.mouse.move(0, 0);
+  await card.getByRole('button').focus();
+  await expect.poll(() => card.evaluate(element => element.getBoundingClientRect().top)).toBeLessThan(restingTop - 6);
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await expect.poll(() => card.evaluate(element => getComputedStyle(element).transform)).toBe('none');
+  await expect(page.locator('.drawing-board')).toBeVisible();
+  expect(await page.locator('.hero-visual .drawing-part').evaluate(element => getComputedStyle(element).animationName)).toBe('none');
 });
