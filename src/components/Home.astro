@@ -1,0 +1,196 @@
+---
+import { Image } from 'astro:assets';
+import '@fontsource-variable/manrope';
+import '../styles/global.css';
+import { content, languages, type Language } from '../data/content';
+import Arrow from './Arrow.astro';
+import workshop from '../assets/workshop.jpg';
+import facility from '../assets/hero.jpg';
+import production from '../assets/production.jpg';
+import quality from '../assets/quality.jpg';
+import technology from '../assets/technology.jpg';
+import measurement from '../assets/measurement.jpg';
+import logo from '../assets/logo.png';
+
+interface Props { lang: Language }
+const { lang } = Astro.props;
+const t = content[lang];
+const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
+const home = `${base}${lang}/`;
+const canonical = new URL(home, Astro.site);
+const navIds = ['about', 'production', 'technology', 'quality', 'references'];
+const serviceImages = [production, technology, quality];
+const names = ['KIA', 'Volkswagen', 'Faurecia', 'Continental', 'INA Kysuce'];
+---
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={t.description} />
+    <meta name="theme-color" content="#153d32" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>{t.title}</title>
+    <link rel="icon" href={`${base}favicon.svg`} type="image/svg+xml" />
+    <link rel="canonical" href={canonical} />
+    {Object.keys(languages).map((code) => <link rel="alternate" hreflang={code} href={new URL(`${base}${code}/`, Astro.site)} />)}
+    <link rel="alternate" hreflang="x-default" href={new URL(`${base}sk/`, Astro.site)} />
+    <meta property="og:title" content={t.title} />
+    <meta property="og:description" content={t.description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={new URL(workshop.src, Astro.site)} />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">{t.skip}</a>
+    <header class="site-header">
+      <div class="header-inner shell">
+        <a href={home} class="brand" aria-label="LAGO">
+          <img src={logo.src} width="160" height="68" alt="LAGO Nástrojáreň" />
+        </a>
+        <nav class="desktop-nav" aria-label={t.menu}>
+          {t.nav.map((label, index) => <a href={`#${navIds[index]}`}>{label}</a>)}
+        </nav>
+        <div class="header-actions">
+          <nav class="languages" aria-label={t.language}>
+            {Object.entries(languages).map(([code, name]) =>
+              <a href={`${base}${code}/`} lang={code} hreflang={code} aria-label={name} aria-current={code === lang ? 'page' : undefined} data-language>{code.toUpperCase()}</a>
+            )}
+          </nav>
+          <a class="header-contact" href="#contact">{lang === 'sk' ? 'Kontakt' : lang === 'de' ? 'Kontakt' : 'Contact'} <Arrow diagonal /></a>
+          <button class="menu-toggle" aria-label={t.menu} aria-expanded="false" aria-controls="mobile-nav"><span>{t.menu}</span><span class="menu-lines" aria-hidden="true"></span></button>
+        </div>
+      </div>
+      <nav id="mobile-nav" class="mobile-nav shell" aria-label={`${t.menu} — ${t.language}`} hidden>
+        {t.nav.map((label, index) => <a href={`#${navIds[index]}`}>{label}<Arrow /></a>)}
+        <a href="#contact">{t.inquiry}<Arrow diagonal /></a>
+      </nav>
+    </header>
+
+    <main id="main">
+      <section class="hero shell" aria-labelledby="hero-title">
+        <div class="hero-copy">
+          <p class="eyebrow"><span class="status-dot"></span>{t.eyebrow}</p>
+          <h1 id="hero-title">{t.headline[0]}<br />{t.headline[1]}<br /><span>{t.headline[2]}</span></h1>
+          <p class="hero-intro">{t.intro}</p>
+          <div class="hero-buttons flex flex-wrap items-center gap-5">
+            <a class="button button-green" href="#contact">{t.inquiry}<Arrow diagonal /></a>
+            <a class="text-link" href="#production">{t.explore}<Arrow /></a>
+          </div>
+          <div class="hero-signoff"><span class="crosshair" aria-hidden="true">+</span><span>{t.since}<br /><strong>Veľké Rovné, Slovakia</strong></span></div>
+        </div>
+        <div class="hero-visual">
+          <Image src={workshop} alt={t.photo} widths={[480, 800, 1200]} sizes="(max-width: 760px) 100vw, 52vw" loading="eager" fetchpriority="high" format="webp" class="hero-image" />
+          <div class="image-topline"><span>LAGO / CNC</span><span aria-hidden="true">↗</span></div>
+          <div class="hero-image-footer"><span class="image-caption"><span class="status-dot"></span>{t.photo}</span><span class="image-number">01 — 03</span></div>
+          <div class="precision-stamp" aria-hidden="true"><span>DESIGNED<br />FOR PRECISION</span><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="30" /><circle cx="50" cy="50" r="14" /><path d="M50 0v100M0 50h100" /></svg><span>EST. 1997</span></div>
+        </div>
+      </section>
+
+      <section class="stats shell" aria-label={t.since}>
+        {[['1997', ''], ['5', 'AXIS'], ['1 000', 't'], ['1942', '']].map(([value, unit], i) =>
+          <div class="stat"><div class="stat-value">{value}<span>{unit}</span></div><p>{t.stats[i]}</p></div>
+        )}
+      </section>
+
+      <section id="production" class="section services">
+        <div class="shell">
+          <div class="section-heading">
+            <div><p class="eyebrow">{t.servicesLabel}</p><h2>{t.servicesTitle}</h2></div>
+            <p class="section-intro">{t.servicesIntro}</p>
+          </div>
+          <div class="service-grid grid gap-6 md:grid-cols-3">
+            {t.services.map((service, i) =>
+              <article class="service-card">
+                <div class="service-image"><Image src={serviceImages[i]} alt={service.title} width={600} height={390} format="webp" loading="lazy" /><span class="service-index">0{i + 1}</span></div>
+                <div class="service-body"><h3>{service.title}</h3><p>{service.description}</p><button class="card-action" data-dialog={`service-${i}`}>{t.learnMore}<span class="sr-only"> — {service.title}</span><Arrow diagonal /></button></div>
+              </article>
+            )}
+          </div>
+        </div>
+      </section>
+
+      <section id="about" class="section about shell">
+        <figure class="about-image"><Image src={facility} alt={t.facility} widths={[600, 1000]} sizes="(max-width: 760px) 100vw, 50vw" format="webp" loading="lazy" /><figcaption><span class="status-dot"></span>{t.facility}</figcaption></figure>
+        <div class="about-copy"><p class="eyebrow">{t.aboutLabel}</p><h2>{t.aboutTitle}</h2><p>{t.aboutText}</p><div class="about-note"><span aria-hidden="true">↗</span><p>{t.aboutNote}</p></div></div>
+      </section>
+
+      <section id="technology" class="section technology">
+        <div class="shell technology-grid">
+          <div class="technology-copy"><p class="eyebrow">{t.techLabel}</p><h2>{t.techTitle}</h2><p>{t.techIntro}</p><a class="text-link" href="#contact">{t.inquiry}<Arrow diagonal /></a><div class="technical-mark" aria-hidden="true"><svg viewBox="0 0 180 180" fill="none"><circle cx="90" cy="90" r="65" /><circle cx="90" cy="90" r="45" /><circle cx="90" cy="90" r="15" /><path d="M90 0v180M0 90h180M26 26l128 128M26 154 154 26" /><path d="M15 15h30M15 15v30M165 165h-30M165 165v-30" /></svg><span>ENGINEERED<br />TO PERFORM.</span></div></div>
+          <div class="technology-list">
+            {t.techGroups.map((group, i) =>
+              <details open={i === 0}><summary><span class="detail-number">0{i + 1}</span><h3>{group.title}</h3><span class="detail-toggle" aria-hidden="true"></span></summary><p>{group.text}</p></details>
+            )}
+          </div>
+        </div>
+      </section>
+
+      <section id="quality" class="section quality shell">
+        <div class="quality-copy"><p class="eyebrow">{t.qualityLabel}</p><h2>{t.qualityTitle}</h2><p>{t.qualityText}</p><ul>{t.qualityPoints.map(point => <li><span aria-hidden="true">✓</span>{point}</li>)}</ul></div>
+        <div class="quality-image"><Image src={measurement} alt={t.qualityAlt} widths={[480, 800]} sizes="(max-width: 760px) 100vw, 50vw" format="webp" loading="lazy" /><div class="quality-label"><span aria-hidden="true">⊕</span><span>3D<br /><small>METROLOGY</small></span></div></div>
+      </section>
+
+      <section id="references" class="section references">
+        <div class="shell"><p class="eyebrow">{t.referencesLabel}</p><h2>{t.referencesTitle}</h2><div class="reference-names">{names.map(name => <span>{name}</span>)}</div><div class="reference-bottom"><p>{t.referencesText}</p><div class="sector-list">{t.sectors.map(sector => <span>{sector}</span>)}</div></div></div>
+      </section>
+
+      <section id="contact" class="contact">
+        <div class="shell">
+          <div class="contact-top"><div><p class="eyebrow">{t.contactLabel}</p><h2>{t.contactTitle}</h2></div><div><p class="contact-intro">{t.contactText}</p><a class="button button-lime" href={`mailto:lago@lago.sk?subject=${encodeURIComponent(t.emailSubject)}`}>{t.email}<Arrow diagonal /></a></div></div>
+          <div class="contact-grid">
+            <div><p class="contact-caption">{t.email}</p><a class="contact-value" href="mailto:lago@lago.sk">lago@lago.sk<Arrow diagonal /></a></div>
+            <div><p class="contact-caption">{t.phone}</p><a class="contact-value" href="tel:+421415582030">+421 41 5582 030<Arrow diagonal /></a></div>
+            <div><p class="contact-caption">{t.address}</p><address>Veľké Rovné 1571<br />013 62 Veľké Rovné, Slovakia</address><a class="directions" href="https://www.google.com/maps/dir/?api=1&destination=LAGO+Nastrojaren+Velke+Rovne+1571" target="_blank" rel="noopener noreferrer">{t.directions}<Arrow diagonal /></a></div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer shell">
+      <div class="footer-top"><a href={home} class="brand" aria-label="LAGO"><img src={logo.src} width="160" height="68" alt="LAGO Nástrojáreň" loading="lazy" /></a><p>{t.footer}</p><a href="#main" class="back-top" aria-label={t.skip}><Arrow diagonal /></a></div>
+      <div class="footer-bottom"><p>© {new Date().getFullYear()} LAGO Nástrojáreň spol. s r. o. {t.rights}</p><span><span class="status-dot"></span>{t.preview} / Astro</span></div>
+    </footer>
+
+    {t.services.map((service, i) =>
+      <dialog id={`service-${i}`} aria-labelledby={`service-title-${i}`}>
+        <div class="dialog-inner"><button class="dialog-close" data-close aria-label={t.close}>×</button><p class="eyebrow">LAGO / 0{i + 1}</p><h2 id={`service-title-${i}`}>{service.title}</h2><p>{service.description}</p><ul>{service.items.map(item => <li>{item}</li>)}</ul><a class="button button-green" href="#contact" data-close>{t.inquiry}<Arrow diagonal /></a></div>
+      </dialog>
+    )}
+
+    <script>
+      const toggle = document.querySelector<HTMLButtonElement>('.menu-toggle');
+      const mobileNav = document.querySelector<HTMLElement>('#mobile-nav');
+      const closeMenu = () => {
+        toggle?.setAttribute('aria-expanded', 'false');
+        if (mobileNav) mobileNav.hidden = true;
+      };
+      toggle?.addEventListener('click', () => {
+        const expanded = toggle.getAttribute('aria-expanded') === 'true';
+        toggle.setAttribute('aria-expanded', String(!expanded));
+        if (mobileNav) mobileNav.hidden = expanded;
+      });
+      mobileNav?.querySelectorAll('a').forEach(link => link.addEventListener('click', closeMenu));
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && toggle?.getAttribute('aria-expanded') === 'true') {
+          closeMenu();
+          toggle.focus();
+        }
+      });
+      matchMedia('(min-width: 1101px)').addEventListener('change', event => { if (event.matches) closeMenu(); });
+      document.querySelectorAll<HTMLButtonElement>('[data-dialog]').forEach(button => {
+        button.addEventListener('click', () => {
+          const dialog = document.getElementById(button.dataset.dialog ?? '');
+          if (dialog instanceof HTMLDialogElement) dialog.showModal();
+        });
+      });
+      document.querySelectorAll<HTMLDialogElement>('dialog').forEach(dialog => {
+        dialog.querySelectorAll<HTMLElement>('[data-close]').forEach(button => button.addEventListener('click', () => dialog.close()));
+        dialog.addEventListener('click', event => { if (event.target === dialog) dialog.close(); });
+      });
+      document.querySelectorAll<HTMLAnchorElement>('[data-language]').forEach(link => {
+        link.addEventListener('click', () => { link.hash = location.hash; });
+      });
+    </script>
+  </body>
+</html>
