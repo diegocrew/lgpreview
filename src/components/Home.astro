@@ -47,7 +47,7 @@ const names = ['KIA', 'Volkswagen', 'Faurecia', 'Continental', 'INA Kysuce'];
     <header class="site-header">
       <div class="header-inner shell">
         <a href={home} class="brand" aria-label="LAGO">
-          <img src={logo.src} width="160" height="68" alt="LAGO Nástrojáreň" />
+          <img src={logo.src} width={logo.width} height={logo.height} alt="LAGO Nástrojáreň" />
         </a>
         <nav class="desktop-nav" aria-label={t.menu}>
           {t.nav.map((label, index) => <a href={`#${navIds[index]}`}>{label}</a>)}
@@ -162,7 +162,7 @@ const names = ['KIA', 'Volkswagen', 'Faurecia', 'Continental', 'INA Kysuce'];
     </main>
 
     <footer class="footer shell">
-      <div class="footer-top"><a href={home} class="brand" aria-label="LAGO"><img src={logo.src} width="160" height="68" alt="LAGO Nástrojáreň" loading="lazy" /></a><p>{t.footer}</p><a href="#main" class="back-top" aria-label={t.skip}><Arrow diagonal /></a></div>
+      <div class="footer-top"><a href={home} class="brand" aria-label="LAGO"><img src={logo.src} width={logo.width} height={logo.height} alt="LAGO Nástrojáreň" loading="lazy" /></a><p>{t.footer}</p><a href="#main" class="back-top" aria-label={t.skip}><Arrow diagonal /></a></div>
       <div class="footer-bottom"><p>© {new Date().getFullYear()} LAGO Nástrojáreň spol. s r. o. {t.rights}</p><span><span class="status-dot"></span>{t.preview} / Astro</span></div>
     </footer>
 
